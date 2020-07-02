@@ -1,8 +1,15 @@
 extern crate base16;
 extern crate base64;
 
-use crate::base32;
+mod encoding;
+mod types;
+
+use crate::hash::{
+    encoding::{HashEncoding},
+    types::HashType,
+};
 use std::result::Result;
+use core::fmt;
 
 // Hash size
 const MD5SIZE: usize = 16;
@@ -16,174 +23,25 @@ const SHA512SIZE: usize = 64;
 // static B16_CHARS: &'static [u8; 16] = &b"0123456789abcdef";
 // static B32_CHARS: &'static [u8; 32] = &b"0123456789abcdfghijklmnpqrsvwxyz";
 
-#[derive(Debug, Clone, Copy)]
-pub(crate) enum HashType {
-    MD5,    // 16 bytes
-    Sha1,   // 20 bytes
-    Sha256, // 32 bytes
-    Sha512, // 64 bytes
-}
-
-impl HashType {
-    // TODO: Write test
-    // pub(crate) fn from_type<'a>(self) -> &'a str {
-    //     match self {
-    //         HashType::MD5 => "md5",
-    //         HashType::Sha1 => "sha1",
-    //         HashType::Sha256 => "sha256",
-    //         HashType::Sha512 => "sha512",
-    //     }
-    // }
-
-    // TODO: Write test
-    pub(crate) fn into_type(text: &str) -> Option<HashType> {
-        match text {
-            "md5" => Some(HashType::MD5),
-            "sha1" => Some(HashType::Sha1),
-            "sha256" => Some(HashType::Sha256),
-            "Sha512" => Some(HashType::Sha512),
-            _ => None,
-        }
-    }
-
-    // FIXME: Brute force is bad!
-    pub(super) fn find_hashing(hdata: &str) -> Self {
-        match hdata.len() {
-            x if x == base16_len(MD5SIZE) | base32_len(MD5SIZE) | base64_len(MD5SIZE) => {
-                return HashType::MD5
-            }
-            x if x == base16_len(SHA1SIZE) | base32_len(SHA1SIZE) | base64_len(SHA1SIZE) => {
-                return HashType::MD5
-            }
-            x if x == base16_len(SHA256SIZE) | base32_len(SHA256SIZE) | base64_len(SHA256SIZE) => {
-                return HashType::MD5
-            }
-            x if x == base16_len(SHA512SIZE) | base32_len(SHA512SIZE) | base64_len(SHA512SIZE) => {
-                return HashType::MD5
-            }
-            _ => HashType::MD5,
-        }
-    }
-}
-
-// function of encoder and decoder of BASE16, BASE32, and BASE64
-#[derive(Debug, Clone, Copy)]
-pub(crate) enum HashEncoding {
-    BASE16,
-    BASE32,
-    BASE64,
-
-    // Prefix encoding
-    // format <type>:base<n>
-    PBASE16,
-    PBASE32,
-    PBASE64,
-
-    // format <type> - base64
-    SRI,
-}
-
-impl HashEncoding {
-    // TODO: write the implementation and test
-    pub(crate) fn into_encoding(
-        htype: Option<&str>,
-        hdata: &str,
-        is_sri: bool,
-    ) -> Option<HashEncoding> {
-        let is_prefix = htype.is_some();
-        let hash_type = match htype.and_then(|x| HashType::into_type(x)) {
-            Some(ht) => ht,
-            None => HashType::find_hashing(hdata),
-        };
-        match hash_type {
-            HashType::MD5 => HashEncoding::find_encoding(hdata, MD5SIZE, is_sri, is_prefix),
-            HashType::Sha1 => HashEncoding::find_encoding(hdata, SHA1SIZE, is_sri, is_prefix),
-            HashType::Sha256 => HashEncoding::find_encoding(hdata, SHA256SIZE, is_sri, is_prefix),
-            HashType::Sha512 => HashEncoding::find_encoding(hdata, SHA512SIZE, is_sri, is_prefix),
-        }
-    }
-
-    pub(super) fn find_encoding(
-        hdata: &str,
-        hash_size: usize,
-        is_sri: bool,
-        is_prefix: bool,
-    ) -> Option<HashEncoding> {
-        if is_sri {
-            return Some(HashEncoding::SRI);
-        }
-        if !is_sri && is_prefix {
-            if hdata.len() == base16_len(hash_size) {
-                return Some(HashEncoding::PBASE16);
-            }
-            if hdata.len() == base32_len(hash_size) {
-                return Some(HashEncoding::PBASE32);
-            }
-            if hdata.len() == base64_len(hash_size) {
-                return Some(HashEncoding::PBASE32);
-            }
-        }
-        if !is_sri && !is_prefix {
-            if hdata.len() == base16_len(hash_size) {
-                return Some(HashEncoding::BASE16);
-            }
-            if hdata.len() == base32_len(hash_size) {
-                return Some(HashEncoding::BASE32);
-            }
-            if hdata.len() == base64_len(hash_size) {
-                return Some(HashEncoding::BASE32);
-            }
-        }
-        return None;
-    }
-
-    pub(crate) fn decode_data<'a>(
-        hash_encoding: HashEncoding,
-        hdata: &str,
-    ) -> Option<std::vec::Vec<u8>> {
-        match hash_encoding {
-            HashEncoding::BASE16 | HashEncoding::PBASE16 => base16::decode(hdata).ok(),
-            HashEncoding::BASE32 | HashEncoding::PBASE32 => base32::decode(hdata).ok(),
-            HashEncoding::BASE64 | HashEncoding::PBASE64 => base64::decode(hdata).ok(),
-            HashEncoding::SRI => base64::decode(hdata).ok(),
-        }
-    }
-
-    // pub(crate) fn from_encoding<'a>(text: HashEncoding) -> &'a str {
-    //     match text {
-    //         BASE16 =>"",
-    //         BASE32 =>"",
-    //         BASE64 =>"",
-
-    //         // Prefix encoding
-    //         // format <type>:base<n>
-    //         PBASE16 =>,
-    //         PBASE32 => ,
-    //         PBASE64 => ,
-
-    //         // format <type> - base64
-    //         SRI =>,
-    //     }
-    // }
-}
-
-pub(crate) fn base16_len(hash_size: usize) -> usize {
-    hash_size * 2
-}
-
-pub(crate) fn base32_len(hash_size: usize) -> usize {
-    (hash_size * 8 - 1) / 5 + 1
-}
-
-pub(crate) fn base64_len(hash_size: usize) -> usize {
-    ((4 * hash_size / 3) + 3) & !3
-}
-
 #[derive(Clone, Debug)]
 pub(crate) struct Hash {
     hash_type: HashType,
     hash_encoding: HashEncoding,
     data: Option<std::vec::Vec<u8>>,
+}
+
+impl fmt::Display for Hash {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f,
+        "
+          type: {:?}\n
+          encoding: {:?}\n
+          data: {:?}
+        ",
+        self.hash_type, self.hash_encoding, self.data
+        )
+
+    }
 }
 
 impl<'a> Hash {
@@ -202,10 +60,6 @@ impl<'a> Hash {
                 let sp = hash.split(':');
                 let first = sp.clone().min_by(|x, y| x.len().cmp(&y.len()));
                 let second = sp.last().unwrap_or("");
-                println!(
-                    "Prefx:\n hash_type = {:?},\n is_sri = {:?},\n hash_data = {:?}",
-                    first, hash_is_sri, second
-                );
                 (first, second)
             } else {
                 return (None, hash);
@@ -214,9 +68,6 @@ impl<'a> Hash {
     }
     // The input will be <hash_type>-<hash_data> or <hash_type>:<hash_data>
     pub(crate) fn parse_hash(hash: &str) -> Result<Hash, Box<dyn std::error::Error>> {
-        // let err_par: Box<dyn std::error::Error> = From::from("parsing hash failed");
-        let err_enc: Box<dyn std::error::Error> =
-            From::from("decoding failed: unable to find the hash type");
         let hash_is_sri = hash.contains('-');
         let (htype, hdata) = Hash::split_hash(hash, hash_is_sri);
         let hash_type = {
@@ -226,10 +77,9 @@ impl<'a> Hash {
             }
         };
 
-        println!("hash type = {:?}", hash_type);
         let hash_encoding = match HashEncoding::into_encoding(htype, hdata, hash_is_sri) {
-            Some(a) => a,
-            None => return Err(err_enc),
+            Ok(a) => a,
+            Err(_) => return Err(From::from("Invalid hash type")), // TODO: Fine the best way to implement error from HashError
         };
 
         let decoded_data = HashEncoding::decode_data(hash_encoding, hdata);
@@ -255,6 +105,21 @@ impl<'a> Hash {
     }
 }
 
+// Basic length representation of Base16
+pub(crate) fn base16_len(hash_size: usize) -> usize {
+    hash_size * 2
+}
+
+// Basic length representation of Base32
+pub(crate) fn base32_len(hash_size: usize) -> usize {
+    (hash_size * 8 - 1) / 5 + 1
+}
+
+// Basic length representation of Base64
+pub(crate) fn base64_len(hash_size: usize) -> usize {
+    ((4 * hash_size / 3) + 3) & !3
+}
+
 #[cfg(test)]
 mod tests {
     #[derive(Debug)]
@@ -264,26 +129,26 @@ mod tests {
         after: String,
     }
 
-    impl TestCase {
-        fn run(&self) -> Result<(), String> {
-            Ok(())
-        }
-    }
+    // impl TestCase {
+    //     fn run(&self) -> Result<(), String> {
+    //         Ok(())
+    //     }
+    // }
 
-    fn run(tests: &[TestCase]) {
-        let mut n_failed = 0;
-        for test in tests {
-            if let Err(msg) = test.run() {
-                n_failed += 1;
-                eprintln!("{}", msg)
-            }
-        }
-        if n_failed > 0 {
-            panic!(
-                "{} failed test cases out of {} total",
-                n_failed,
-                tests.len()
-            )
-        }
-    }
+    // fn run(tests: &[TestCase]) {
+    //     let mut n_failed = 0;
+    //     for test in tests {
+    //         if let Err(msg) = test.run() {
+    //             n_failed += 1;
+    //             eprintln!("{}", msg)
+    //         }
+    //     }
+    //     if n_failed > 0 {
+    //         panic!(
+    //             "{} failed test cases out of {} total",
+    //             n_failed,
+    //             tests.len()
+    //         )
+    //     }
+    // }
 }

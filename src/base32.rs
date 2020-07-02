@@ -1,4 +1,7 @@
 use lazy_static::lazy_static;
+use core::fmt;
+#[cfg(any(feature = "std", test))]
+use std::error;
 
 // pub fn encoded_len(input_len: usize) -> usize {
 //     if input_len == 0 {
@@ -57,16 +60,49 @@ lazy_static! {
 //     assert_eq!(pos, 0);
 // }
 
-pub(crate) fn decode(input: &str) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum DecodeError {
+    /// An invalid byte was found in the input. The offset and offending byte are provided.
+    InvalidByte(usize, u8),
+    /// The length of the input is invalid.
+    InvalidLength,
+}
+
+impl fmt::Display for DecodeError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            DecodeError::InvalidByte(index, byte) => {
+                write!(f, "Invalid byte {}, offset {}.", byte, index)
+            }
+            DecodeError::InvalidLength => write!(f, "Encoded text cannot have a 8-bit remainder."),
+        }
+    }
+}
+
+#[cfg(any(feature = "std", test))]
+impl error::Error for DecodeError {
+    fn description(&self) -> &str {
+        match *self {
+            DecodeError::InvalidByte(_, _) => "invalid byte",
+            DecodeError::InvalidLength => "invalid length",
+        }
+    }
+
+    fn cause(&self) -> Option<&dyn error::Error> {
+        None
+    }
+}
+
+
+pub(crate) fn decode(input: &str) -> Result<Vec<u8>, DecodeError> {
     let mut res = Vec::with_capacity(decoded_len(input.len()));
-    let err: Box<dyn std::error::Error> = From::from("invalid base32 string");
     let mut nr_bits_left: usize = 0;
     let mut bits_left: u16 = 0;
 
     for c in input.chars().rev() {
         let b = BASE32_CHARS_REVERSE[c as usize];
         if b == 0xff {
-            return Err(err);
+            return Err(DecodeError::InvalidByte(c as usize,b));
         }
         bits_left |= (b as u16) << nr_bits_left;
         nr_bits_left += 5;
@@ -78,7 +114,7 @@ pub(crate) fn decode(input: &str) -> Result<Vec<u8>, Box<dyn std::error::Error>>
     }
 
     if nr_bits_left > 0 && bits_left != 0 {
-        return Err(err);
+        return Err(DecodeError::InvalidLength);
     }
 
     Ok(res)
