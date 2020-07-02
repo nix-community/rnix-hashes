@@ -3,13 +3,13 @@ use core::fmt;
 #[cfg(any(feature = "std", test))]
 use std::error;
 
-// pub fn encoded_len(input_len: usize) -> usize {
-//     if input_len == 0 {
-//         0
-//     } else {
-//         (input_len * 8 - 1) / 5 + 1
-//     }
-// }
+pub fn encoded_len(input_len: usize) -> usize {
+    if input_len == 0 {
+        0
+    } else {
+        (input_len * 8 - 1) / 5 + 1
+    }
+}
 
 pub fn decoded_len(input_len: usize) -> usize {
     input_len * 5 / 8
@@ -27,38 +27,38 @@ lazy_static! {
     };
 }
 
-// pub(crate) fn encode(input: &[u8]) -> String {
-//     let mut buf = vec![0; encoded_len(input.len())];
-//     encode_into(input, &mut buf);
-//     std::str::from_utf8(&buf).unwrap().to_string()
-// }
+pub(crate) fn encode(input: &[u8]) -> String {
+    let mut buf = vec![0; encoded_len(input.len())];
+    encode_into(input, &mut buf);
+    std::str::from_utf8(&buf).unwrap().to_string()
+}
 
-// pub fn encode_into(input: &[u8], output: &mut [u8]) {
-//     let len = encoded_len(input.len());
-//     assert_eq!(len, output.len());
+pub fn encode_into(input: &[u8], output: &mut [u8]) {
+    let len = encoded_len(input.len());
+    assert_eq!(len, output.len());
 
-//     let mut nr_bits_left: usize = 0;
-//     let mut bits_left: u16 = 0;
-//     let mut pos = len;
+    let mut nr_bits_left: usize = 0;
+    let mut bits_left: u16 = 0;
+    let mut pos = len;
 
-//     for b in input {
-//         bits_left |= (*b as u16) << nr_bits_left;
-//         nr_bits_left += 8;
-//         while nr_bits_left > 5 {
-//             output[pos - 1] = BASE32_CHARS[(bits_left & 0x1f) as usize];
-//             pos -= 1;
-//             bits_left >>= 5;
-//             nr_bits_left -= 5;
-//         }
-//     }
+    for b in input {
+        bits_left |= (*b as u16) << nr_bits_left;
+        nr_bits_left += 8;
+        while nr_bits_left > 5 {
+            output[pos - 1] = BASE32_CHARS[(bits_left & 0x1f) as usize];
+            pos -= 1;
+            bits_left >>= 5;
+            nr_bits_left -= 5;
+        }
+    }
 
-//     if nr_bits_left > 0 {
-//         output[pos - 1] = BASE32_CHARS[(bits_left & 0x1f) as usize];
-//         pos -= 1;
-//     }
+    if nr_bits_left > 0 {
+        output[pos - 1] = BASE32_CHARS[(bits_left & 0x1f) as usize];
+        pos -= 1;
+    }
 
-//     assert_eq!(pos, 0);
-// }
+    assert_eq!(pos, 0);
+}
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum DecodeError {

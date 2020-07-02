@@ -11,6 +11,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .version("0.1")
         .author("NumTide Engineering")
         .about("Nix Has Converter")
+        .arg(Arg::with_name("encoding")
+            .long("encoding")
+            .value_name("ENCODING")
+            .help("Sets specific encoding: BASE16|BASE32|BASE64|PBASE16|PBASE32|PBASE64|SRI")
+            .takes_value(true)
+        )
         .arg(
             Arg::with_name("INPUT")
                 .help("Sets the input file to use")
@@ -42,12 +48,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
+    let encoding = matches.value_of("encoding");
+
     // more program logic goes here...
     // 1. we parse the hash
     // 2. print the hash in multiple encoding
     //
     let hash_arg = matches.value_of("INPUT").unwrap();
     let parsed_hash = Hash::parse_hash(hash_arg)?;
-    Hash::print_hash(parsed_hash);
+    Hash::print_hash(encoding, parsed_hash);
     Ok(())
 }

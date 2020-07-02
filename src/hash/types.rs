@@ -82,7 +82,7 @@ impl HashType {
     }
 
     // TODO: Write test
-    pub(crate) fn into_type(text: &str) -> Option<HashType> {
+    pub(crate) fn into_type(text: &str) -> Option<Self> {
         match text {
             "md5" => Some(HashType::MD5),
             "sha1" => Some(HashType::Sha1),

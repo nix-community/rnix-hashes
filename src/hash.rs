@@ -4,9 +4,14 @@ extern crate base64;
 mod encoding;
 mod types;
 
-use crate::hash::{
-    encoding::{HashEncoding},
-    types::HashType,
+use crate::{
+    base32,
+    hash::{
+        encoding::{
+            HashEncoding,
+        },
+        types::HashType,
+    }
 };
 use std::result::Result;
 use core::fmt;
@@ -77,7 +82,7 @@ impl<'a> Hash {
             }
         };
 
-        let hash_encoding = match HashEncoding::into_encoding(htype, hdata, hash_is_sri) {
+        let hash_encoding = match HashEncoding::get_encoding(htype, hdata, hash_is_sri) {
             Ok(a) => a,
             Err(_) => return Err(From::from("Invalid hash type")), // TODO: Fine the best way to implement error from HashError
         };
@@ -91,16 +96,52 @@ impl<'a> Hash {
         });
     }
 
-    pub(crate) fn print_hash(hash: Hash) {
-        // TODO
-        //
-        println!(
-            "
-          type: {:?}\n
-          encoding: {:?}\n
-          data: {:?}
-        ",
-            hash.hash_type, hash.hash_encoding, hash.data
+    // By default, print_hash will show all possible encoding for the hash
+    // It can be changed by providing argument --encoding into the program
+    pub(crate) fn print_hash(enc: Option<&str>, hash: Hash) {
+        let hash_type = hash.hash_type.from_type();
+        let hash_data = match hash.data {
+            Some(a) => a,
+            None => Vec::new()
+        };
+        if let Some(encoding) = enc {
+            match HashEncoding::into_encoding(encoding){
+                Some(HashEncoding::BASE16) => {
+                    return println!{"{}:{}", hash_type, base16::encode_lower(&hash_data)}
+                },
+                Some(HashEncoding::BASE32) => {
+                    return println!{"{}:{}", hash_type, base32::encode(&hash_data)}
+                },
+                Some(HashEncoding::BASE64) => {
+                    return println!{"{}:{}", hash_type, base64::encode(&hash_data)}
+                },
+                Some(HashEncoding::PBASE16) => {
+                    return println!{"{}:{}", hash_type, base16::encode_lower(&hash_data)}
+                },
+                Some(HashEncoding::PBASE32) => {
+                    return println!{"{}:{}", hash_type, base32::encode(&hash_data)}
+                },
+                Some(HashEncoding::PBASE64) => {
+                    return println!{"{}:{}", hash_type, base64::encode(&hash_data)}
+                },
+                Some(HashEncoding::SRI) => {
+                    return println!{"{}-{}", hash_type, base64::encode(&hash_data)}
+                },
+                _ => return println!("Invalid encoding")
+            }
+        }
+        // If encoding argument is empty, then the default is printing all encoding
+        return println!("
+            {}-{}\n
+            {}:{}\n
+            {}:{}\n
+            {}:{}
+            ",
+            hash_type, base64::encode(&hash_data),
+            hash_type, base64::encode(&hash_data),
+            hash_type, base32::encode(&hash_data),
+            hash_type, base16::encode_lower(&hash_data),
+
         )
     }
 }

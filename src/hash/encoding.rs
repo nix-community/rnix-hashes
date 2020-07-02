@@ -71,8 +71,23 @@ impl HashEncoding {
           HashEncoding::SRI => "SRI",
       }
   }
+
+  pub(crate) fn into_encoding(text: &str) -> Option<Self> {
+    match text {
+        "BASE16" => Some(HashEncoding::BASE16),
+        "BASE32" =>  Some(HashEncoding::BASE32),
+        "BASE64" => Some(HashEncoding::BASE64),
+        "PBASE16" => Some(HashEncoding::PBASE16),
+        "PBASE32" => Some(HashEncoding::PBASE32),
+        "PBASE64" => Some(HashEncoding::PBASE64),
+        "SRI" => Some(HashEncoding::SRI),
+        _ => None
+    }
+}
+
   // TODO: write the implementation and test
-  pub(crate) fn into_encoding<'a> (
+  // Get encoding type from parsed hash input
+  pub(crate) fn get_encoding<'a> (
       htype: Option<&'a str>,
       hdata: &'a str,
       is_sri: bool,
