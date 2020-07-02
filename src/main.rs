@@ -3,7 +3,7 @@ extern crate clap;
 mod base32;
 mod hash;
 
-use clap::{App, Arg, SubCommand};
+use clap::{App, Arg};
 use hash::Hash;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {

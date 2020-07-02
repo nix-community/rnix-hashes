@@ -7,6 +7,8 @@ pkgs.mkShell {
     pkgs.mdsh
     pkgs.openssl
     pkgs.pkgconfig
+    pkgs.wasm-pack
+    rust
   ]
   ++ pkgs.stdenv.lib.optionals pkgs.stdenv.isDarwin [
     pkgs.darwin.apple_sdk.frameworks.Security
