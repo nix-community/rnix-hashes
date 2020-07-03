@@ -1,24 +1,12 @@
 {
   description = "rnix-hash";
 
-  inputs.nixpkgs.url = github:NixOS/nixpkgs/master;
   inputs.flake-utils.url = "github:numtide/flake-utils";
-  inputs.naersk = {
-    type = "github";
-    owner = "nmattia";
-    repo = "naersk";
-    flake = false;
-  };
-  inputs.mozilla-overlay = {
-    type = "github";
-    owner = "mozilla";
-    repo = "nixpkgs-mozilla";
-    flake = false;
-  };
+  inputs.naersk.url = "github:zimbatm/naersk";
 
-  outputs = { self, nixpkgs, naersk, mozilla-overlay, flake-utils }:
+  outputs = { self, nixpkgs, naersk, flake-utils }:
     {
-      overlay = import ./overlay.nix {inherit naersk;};
+      overlay = import ./overlay.nix;
     }
     //
     (
@@ -27,7 +15,7 @@
           pkgs = import nixpkgs {
             inherit system;
             overlays = [
-              (import mozilla-overlay)
+              naersk.overlay
               self.overlay
             ];
           };

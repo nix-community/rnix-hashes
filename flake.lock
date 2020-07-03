@@ -17,64 +17,42 @@
         "type": "github"
       }
     },
-    "mozilla-overlay": {
-      "flake": false,
-      "info": {
-        "lastModified": 1593680645,
-        "narHash": "sha256-XjnDEqeYZVClsV75yBd1cGRAx3twUA8jieWMOsEqJe0="
-      },
-      "locked": {
-        "owner": "mozilla",
-        "repo": "nixpkgs-mozilla",
-        "rev": "ab9b53ebbbf9fe803e0fd7718192e7f3ba2c7759",
-        "type": "github"
-      },
-      "original": {
-        "owner": "mozilla",
-        "repo": "nixpkgs-mozilla",
-        "type": "github"
-      }
-    },
     "naersk": {
-      "flake": false,
       "info": {
-        "lastModified": 1587044740,
-        "narHash": "sha256-j6+ZeL3vh1w9THce5sosg1eVO04eC7GAW9J4UXLkcgE="
+        "lastModified": 1578561018,
+        "narHash": "sha256-RkKjc98gO00Va2gYrGN5yqEhgmm3BR21RostqafAje0="
       },
       "locked": {
-        "owner": "nmattia",
+        "owner": "zimbatm",
         "repo": "naersk",
-        "rev": "a82fd7dc31a58c462b6dfa9d9d886fa2cc75dfd4",
+        "rev": "49e8faf88f215b2f6b24f76d335de7dccb802bde",
         "type": "github"
       },
       "original": {
-        "owner": "nmattia",
+        "owner": "zimbatm",
         "repo": "naersk",
         "type": "github"
       }
     },
     "nixpkgs": {
       "info": {
-        "lastModified": 1593708017,
-        "narHash": "sha256-Aw2myfEGmWjz6LBbLW2ifaRTe+U9/ZEBgkvdLjwbRv0="
+        "lastModified": 1593764976,
+        "narHash": "sha256-UvwI4tv6KYNjmvKgR/5EPM4G8bOnHMfvYsHF+MELwK0="
       },
       "locked": {
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "104c8b5e0307062728fe692bb2216153d77dab33",
+        "rev": "7df7291473128d8ae5d91454f37bb47e7816399f",
         "type": "github"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "master",
-        "repo": "nixpkgs",
-        "type": "github"
+        "id": "nixpkgs",
+        "type": "indirect"
       }
     },
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "mozilla-overlay": "mozilla-overlay",
         "naersk": "naersk",
         "nixpkgs": "nixpkgs"
       }

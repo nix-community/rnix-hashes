@@ -3,10 +3,12 @@ buildEnv {
   inherit name;
 
   paths = [
-    rnixHash.pkgs.rust
-    rnixHash.pkgs.naersk
     pkgs.awscli
+    pkgs.cargo
+    pkgs.cargo-edit
+    pkgs.cargo.passthru.rustc
     pkgs.jq
     pkgs.nixpkgs-fmt
+    pkgs.rustc
   ];
 }
