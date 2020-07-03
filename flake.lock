@@ -1,0 +1,85 @@
+{
+  "nodes": {
+    "flake-utils": {
+      "info": {
+        "lastModified": 1593533949,
+        "narHash": "sha256-j5OH1uR8Mu/NqYH44+gnPln0eoGNNahxl0qNSYNi0Og="
+      },
+      "locked": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "400fa6d9af95481440d8d69a6b49de5901936730",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "mozilla-overlay": {
+      "flake": false,
+      "info": {
+        "lastModified": 1593680645,
+        "narHash": "sha256-XjnDEqeYZVClsV75yBd1cGRAx3twUA8jieWMOsEqJe0="
+      },
+      "locked": {
+        "owner": "mozilla",
+        "repo": "nixpkgs-mozilla",
+        "rev": "ab9b53ebbbf9fe803e0fd7718192e7f3ba2c7759",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mozilla",
+        "repo": "nixpkgs-mozilla",
+        "type": "github"
+      }
+    },
+    "naersk": {
+      "flake": false,
+      "info": {
+        "lastModified": 1587044740,
+        "narHash": "sha256-j6+ZeL3vh1w9THce5sosg1eVO04eC7GAW9J4UXLkcgE="
+      },
+      "locked": {
+        "owner": "nmattia",
+        "repo": "naersk",
+        "rev": "a82fd7dc31a58c462b6dfa9d9d886fa2cc75dfd4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nmattia",
+        "repo": "naersk",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "info": {
+        "lastModified": 1593708017,
+        "narHash": "sha256-Aw2myfEGmWjz6LBbLW2ifaRTe+U9/ZEBgkvdLjwbRv0="
+      },
+      "locked": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "104c8b5e0307062728fe692bb2216153d77dab33",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "master",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "mozilla-overlay": "mozilla-overlay",
+        "naersk": "naersk",
+        "nixpkgs": "nixpkgs"
+      }
+    }
+  },
+  "root": "root",
+  "version": 5
+}
