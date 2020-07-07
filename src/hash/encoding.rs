@@ -93,27 +93,31 @@ impl HashEncoding {
       is_sri: bool,
   ) -> Result<HashEncoding, HashError> {
       let is_prefix = htype.is_some();
-      let hash_type = match htype.and_then(|x| HashType::into_type(x)) {
+      if Some(true) == htype.map(|x| x.is_empty()){ return Err(HashError::InvalidType) } // FIXME: find a better way to represent empty string in htype, for example Some("")
+      let into_hash = htype.and_then(|x|  HashType::into_type(x) );
+      let hash_type = match into_hash {
           Some(ht) => Ok(ht),
-          None => HashType::find_hashing(hdata),
+          None => HashType::find_hash_type(hdata),
       };
       if let Ok(ht) = hash_type {
-          match ht {
-              HashType::MD5 => {
-                  return HashEncoding::find_encoding(hdata, MD5SIZE, is_sri, is_prefix)
-              }
-              HashType::Sha1 => {
-                  return HashEncoding::find_encoding(hdata, SHA1SIZE, is_sri, is_prefix)
-              },
-              HashType::Sha256 => {
-                  return HashEncoding::find_encoding(hdata, SHA256SIZE, is_sri, is_prefix)
-              },
-              HashType::Sha512 => {
-                  return HashEncoding::find_encoding(hdata, SHA512SIZE, is_sri, is_prefix)
-              }
-          }
+          if let Ok(_hd) = HashType::find_hash_type(hdata) {
+            match ht {
+                HashType::MD5 => {
+                    return HashEncoding::find_encoding(hdata, MD5SIZE, is_sri, is_prefix)
+                }
+                HashType::Sha1 => {
+                    return HashEncoding::find_encoding(hdata, SHA1SIZE, is_sri, is_prefix)
+                },
+                HashType::Sha256 => {
+                    return HashEncoding::find_encoding(hdata, SHA256SIZE, is_sri, is_prefix)
+                },
+                HashType::Sha512 => {
+                    return HashEncoding::find_encoding(hdata, SHA512SIZE, is_sri, is_prefix)
+                }
+            }
+        }
       }
-  return Err(HashError::InvalidType)
+      return Err(HashError::InvalidType)
   }
 
   pub(super) fn find_encoding(
@@ -161,21 +165,35 @@ impl HashEncoding {
           HashEncoding::SRI => base64::decode(hdata).ok(),
       }
   }
+}
 
-  // pub(crate) fn from_encoding<'a>(text: HashEncoding) -> &'a str {
-  //     match text {
-  //         BASE16 =>"",
-  //         BASE32 =>"",
-  //         BASE64 =>"",
+#[cfg(test)]
+mod tests {
+    use crate::{
+        hash::{
+            SHA256SIZE,
+            encoding::HashEncoding,
+        }
+    };
 
-  //         // Prefix encoding
-  //         // format <type>:base<n>
-  //         PBASE16 =>,
-  //         PBASE32 => ,
-  //         PBASE64 => ,
+    #[test]
+    fn test_find_encoding_sha256() {
+        assert_eq!(HashEncoding::find_encoding("Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=", SHA256SIZE, true, false).is_ok(), true);
+        assert_eq!(HashEncoding::find_encoding("Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=", SHA256SIZE, true, true).is_ok(), true);
+        assert_eq!(HashEncoding::find_encoding("Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=", SHA256SIZE, false, true).is_ok(), true);
+        assert_eq!(HashEncoding::find_encoding("Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=", SHA256SIZE, false, false).is_ok(), true);
+    }
 
-  //         // format <type> - base64
-  //         SRI =>,
-  //     }
-  // }
+    #[test]
+    fn test_get_encoding() {
+        assert_eq!(HashEncoding::get_encoding(Some("sha256"),"Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=", false).is_ok(), true);
+        assert_eq!(HashEncoding::get_encoding(None,"Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=", false).is_ok(), true);
+        assert_eq!(HashEncoding::get_encoding(Some("sha256"),"Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=", true).is_ok(), true);
+        assert_eq!(HashEncoding::get_encoding(Some("sha256"),"Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708Cnq", true).is_err(), true);
+        assert_eq!(HashEncoding::get_encoding(None,"Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=", true).is_ok(), true);
+        assert_eq!(HashEncoding::get_encoding(None,"Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708C=", true).is_err(), true);
+        assert_eq!(HashEncoding::get_encoding(Some(""),"Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=", true).is_err(), true);
+        assert_eq!(HashEncoding::get_encoding(Some(""),"Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=", false).is_err(), true);
+
+    }
 }

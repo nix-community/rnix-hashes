@@ -55,10 +55,6 @@ impl<'a> Hash {
             let sp = hash.split('-').into_iter();
             let first = sp.clone().min_by(|x, y| x.len().cmp(&y.len()));
             let second = sp.last().unwrap_or("");
-            println!(
-                "SRI:\n hash_type = {:?},\n is_sri = {:?},\n hash_data = {:?}",
-                first, hash_is_sri, second
-            );
             (first, second)
         } else {
             if hash.contains(':') {
@@ -164,6 +160,11 @@ pub(crate) fn base32_len(hash_size: usize) -> usize {
 pub(crate) fn base64_len(hash_size: usize) -> usize {
     ((4 * hash_size / 3) + 3) & !3
 }
+
+
+// TODO:
+// - decoding test
+// - encoding test
 
 #[cfg(test)]
 mod tests {
