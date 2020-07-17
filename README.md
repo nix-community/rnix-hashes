@@ -1,4 +1,4 @@
-# rnix-hash: Nix Hash Converter
+# rnix-hashes: Nix Hash Converter
 
 ## Background
 In Nix 2.0 CLI, it uses SRI hashes instead of the old format. Meanwhile, some Nix user tends to stay with the old format.
@@ -8,17 +8,17 @@ This project trying to bridge the gap between the new SRI format and old format 
 
 ## Installation
 
-nixpkgs-fmt is available in nixpkgs master soon. `nix-env -i rnix-hash`.
+nixpkgs-fmt is available in nixpkgs master soon. `nix-env -i rnix-hashes`.
 
 It's also possible to install it directly from this repository:
 
-`nix-env -f https://github.com/numtide/rnix-hash/archive/master.tar.gz -i`
+`nix-env -f https://github.com/numtide/rnix-hashes/archive/master.tar.gz -i`
 
 ## Usage Example
 
-User can provide their hash into `rnix-hash` and by default, it will print out all possible encoding into the terminal.
+User can provide their hash into `rnix-hashes` and by default, it will print out all possible encoding into the terminal.
 ```
-$ rnix-hash sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
+$ rnix-hashes sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
 
 sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
 sha256:19cy097yzm3ihbnkbiqfa4y8dxrkhc00f5ky92aiw8hwvdb4wzv3
