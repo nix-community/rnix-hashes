@@ -98,49 +98,55 @@ impl<'a> Hash {
 
     // By default, print_hash will show all possible encoding for the hash
     // It can be changed by providing argument --encoding into the program
-    pub(crate) fn print_hash(enc: Option<&str>, hash: Hash) {
-        let hash_type = hash.hash_type.from_type();
-        let hash_data = match hash.data {
+    pub(crate) fn print_hash(enc: Option<&'a str>, hash: &'a str) -> String {
+        let parsed_hash = Hash::parse_hash(hash).unwrap();
+        let hash_type = parsed_hash.hash_type.from_type();
+        let hash_data = match parsed_hash.data {
             Some(a) => a,
             None => Vec::new()
         };
+        let htype: String = hash_type.into();
+        let enc16: String = base16::encode_lower(&hash_data);
+        let enc32: String = base32::encode(&hash_data);
+        let enc64: String = base64::encode(&hash_data);
+
         if let Some(encoding) = enc {
             match HashEncoding::into_encoding(encoding){
                 Some(HashEncoding::BASE16) => {
-                    return println!{"{}:{}", hash_type, base16::encode_lower(&hash_data)}
+                    return format!("base16\t{}", enc16)
                 },
                 Some(HashEncoding::BASE32) => {
-                    return println!{"{}:{}", hash_type, base32::encode(&hash_data)}
+                    return format!("base32\t{}", enc32)
                 },
                 Some(HashEncoding::BASE64) => {
-                    return println!{"{}:{}", hash_type, base64::encode(&hash_data)}
+                    return format!("base64\t{}", enc64)
                 },
                 Some(HashEncoding::PBASE16) => {
-                    return println!{"{}:{}", hash_type, base16::encode_lower(&hash_data)}
+                    return format!("base16\t{}", enc16)
                 },
                 Some(HashEncoding::PBASE32) => {
-                    return println!{"{}:{}", hash_type, base32::encode(&hash_data)}
+                    return format!("base32\t{}", enc32)
                 },
                 Some(HashEncoding::PBASE64) => {
-                    return println!{"{}:{}", hash_type, base64::encode(&hash_data)}
+                    return format!("base64\t{}", enc64)
                 },
                 Some(HashEncoding::SRI) => {
-                    return println!{"{}-{}", hash_type, base64::encode(&hash_data)}
+                    return format!("SRI \t{}-{}", htype, enc64)
                 },
-                _ => return println!("Invalid encoding")
+                _ => return "".into()
             }
         }
         // If encoding argument is empty, then the default is printing all encoding
-        return println!("
-            SRI \t{}-{}\n
-            base16\t{}\n
-            base32\t{}\n
-            base64\t{}
-            ",
-            hash_type, base64::encode(&hash_data),
-            base16::encode_lower(&hash_data),
-            base32::encode(&hash_data),
-            base64::encode(&hash_data),
+        return format!("
+        SRI \t{}-{}
+        base16\t{}
+        base32\t{}
+        base64\t{}
+        ",
+            htype, enc64,
+            enc16,
+            enc32,
+            enc64,
         )
     }
 }
@@ -167,164 +173,52 @@ pub(crate) fn base64_len(hash_size: usize) -> usize {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::{
-        Hash,
-        base32,
-        hash::{
-
-            encoding::{
-                HashEncoding,
-            },
-        }
-    };
+    use crate::Hash;
 
     const INPUT: &str = "sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=";
-    fn print_hash_test<'a>(enc: Option<&'a str>, hash: &'a str) -> String {
-        let parsed_hash = Hash::parse_hash(hash).unwrap();
-        let hash_type = parsed_hash.hash_type.from_type();
-        let hash_data = match parsed_hash.data {
-            Some(a) => a,
-            None => Vec::new()
-        };
-        let htype: String = hash_type.into();
-        let enc16: String = base16::encode_lower(&hash_data);
-        let enc32: String = base32::encode(&hash_data);
-        let enc64: String = base64::encode(&hash_data);
-
-        if let Some(encoding) = enc {
-            match HashEncoding::into_encoding(encoding){
-                Some(HashEncoding::BASE16) => {
-                    return format!("{}:{}",htype, enc16)
-                },
-                Some(HashEncoding::BASE32) => {
-                    return format!("{}:{}",htype, enc32)
-                },
-                Some(HashEncoding::BASE64) => {
-                    return format!("{}:{}",htype, enc64)
-                },
-                Some(HashEncoding::PBASE16) => {
-                    return format!("{}:{}",htype, enc16)
-                },
-                Some(HashEncoding::PBASE32) => {
-                    return format!("{}:{}",htype, enc32)
-                },
-                Some(HashEncoding::PBASE64) => {
-                    return format!("{}:{}",htype, enc64)
-                },
-                Some(HashEncoding::SRI) => {
-                    return format!("{}-{}",htype, enc64)
-                },
-                _ => return "".into()
-            }
-        }
-        // If encoding argument is empty, then the default is printing all encoding
-        return format!("
-        {}-{}
-        {}:{}
-        {}:{}
-        {}:{}
-        ",
-            htype, enc64,
-            htype, enc64,
-            htype, enc32,
-            htype, enc16,
-        )
-    }
 
     #[test]
     fn test_opt_base16() {
-        assert_eq!(print_hash_test(Some("BASE16"),INPUT), "sha256:637f4e56db1c221e95487e1607008333f7863c510ec735ed8271d4ef4f029ea5");
+        assert_eq!(Hash::print_hash(Some("BASE16"),INPUT), "base16\t637f4e56db1c221e95487e1607008333f7863c510ec735ed8271d4ef4f029ea5");
     }
 
     #[test]
     fn test_opt_base32() {
-        assert_eq!(print_hash_test(Some("BASE32"),INPUT), "sha256:19cy097yzm3ihbnkbiqfa4y8dxrkhc00f5ky92aiw8hwvdb4wzv3");
+        assert_eq!(Hash::print_hash(Some("BASE32"),INPUT), "base32\t19cy097yzm3ihbnkbiqfa4y8dxrkhc00f5ky92aiw8hwvdb4wzv3");
     }
 
     #[test]
     fn test_opt_base64() {
-        assert_eq!(print_hash_test(Some("BASE64"),INPUT), "sha256:Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=");
+        assert_eq!(Hash::print_hash(Some("BASE64"),INPUT), "base64\tY39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=");
     }
 
     #[test]
     fn test_opt_pbase16() {
-        assert_eq!(print_hash_test(Some("PBASE16"),INPUT), "sha256:637f4e56db1c221e95487e1607008333f7863c510ec735ed8271d4ef4f029ea5");
+        assert_eq!(Hash::print_hash(Some("PBASE16"),INPUT), "base16\t637f4e56db1c221e95487e1607008333f7863c510ec735ed8271d4ef4f029ea5");
     }
 
     #[test]
     fn test_opt_pbase32() {
-        assert_eq!(print_hash_test(Some("PBASE32"),INPUT), "sha256:19cy097yzm3ihbnkbiqfa4y8dxrkhc00f5ky92aiw8hwvdb4wzv3");
+        assert_eq!(Hash::print_hash(Some("PBASE32"),INPUT), "base32\t19cy097yzm3ihbnkbiqfa4y8dxrkhc00f5ky92aiw8hwvdb4wzv3");
     }
 
     #[test]
     fn test_opt_pbase64() {
-        assert_eq!(print_hash_test(Some("PBASE64"),INPUT), "sha256:Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=");
+        assert_eq!(Hash::print_hash(Some("PBASE64"),INPUT), "base64\tY39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=");
     }
 
     #[test]
     fn test_opt_sri() {
-        assert_eq!(print_hash_test(Some("SRI"),INPUT), "sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=");
+        assert_eq!(Hash::print_hash(Some("SRI"),INPUT), "SRI \tsha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=");
     }
 
     #[test]
     fn test_opt_all() {
-        assert_eq!(print_hash_test(None,INPUT), "
-        sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
-        sha256:Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
-        sha256:19cy097yzm3ihbnkbiqfa4y8dxrkhc00f5ky92aiw8hwvdb4wzv3
-        sha256:637f4e56db1c221e95487e1607008333f7863c510ec735ed8271d4ef4f029ea5
+        assert_eq!(Hash::print_hash(None,INPUT), "
+        SRI \tsha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
+        base16\t637f4e56db1c221e95487e1607008333f7863c510ec735ed8271d4ef4f029ea5
+        base32\t19cy097yzm3ihbnkbiqfa4y8dxrkhc00f5ky92aiw8hwvdb4wzv3
+        base64\tY39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
         ");
     }
-
-
-
-    // #[derive(Debug)]
-    // struct TestCase<'a> {
-    //     name: Option<String>,
-    //     input:  &'a str,
-    //     encoding_opt: Option<&'a str>,
-    //     output: &'a str,
-    // }
-
-    // impl<'a> TestCase<'a> {
-
-        // fn from_before_after(input: &'a str, encoding_opt: Option<&'a str>, output: &'a str) -> TestCase<'a> {
-        //     TestCase { name: None, input, encoding_opt, output }
-        // }
-
-    //     fn run(&self) -> Result<(), String> {
-    //         let name = self.name.as_ref().map(|it| it.as_str()).unwrap_or("");
-    //         let expected = &self.after;
-    //         let actual = &reformat_string(&self.before);
-    //         if expected != actual {
-    //             return Err(format!(
-    //                 "\n\nAssertion failed: wrong formatting\
-    //                  \nTest: {}\n\
-    //                  \nBefore:\n{}\n\
-    //                  \nAfter:\n{}\n\
-    //                  \nExpected:\n{}\n",
-    //                 name, self.before, actual, self.after,
-    //             ));
-    //         }
-    //         Ok(())
-    //     }
-    // }
-
-    // fn run(tests: &[TestCase]) {
-    //     let mut n_failed = 0;
-    //     for test in tests {
-    //         if let Err(msg) = test.run() {
-    //             n_failed += 1;
-    //             eprintln!("{}", msg)
-    //         }
-    //     }
-    //     if n_failed > 0 {
-    //         panic!(
-    //             "{} failed test cases out of {} total",
-    //             n_failed,
-    //             tests.len()
-    //         )
-    //     }
-    // }
 }
