@@ -7,7 +7,7 @@ use clap::{App, Arg};
 use hash::Hash;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let matches = App::new("Nixihash")
+    let matches = App::new("rnix-hashes")
         .version("0.1")
         .author("NumTide Engineering")
         .about("Nix Has Converter")
