@@ -132,16 +132,15 @@ impl<'a> Hash {
         }
         // If encoding argument is empty, then the default is printing all encoding
         return println!("
-            {}-{}\n
-            {}:{}\n
-            {}:{}\n
-            {}:{}
+            SRI \t{}-{}\n
+            base16\t{}\n
+            base32\t{}\n
+            base64\t{}
             ",
             hash_type, base64::encode(&hash_data),
-            hash_type, base64::encode(&hash_data),
-            hash_type, base32::encode(&hash_data),
-            hash_type, base16::encode_lower(&hash_data),
-
+            base16::encode_lower(&hash_data),
+            base32::encode(&hash_data),
+            base64::encode(&hash_data),
         )
     }
 }
