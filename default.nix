@@ -1,15 +1,14 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import <nixpkgs> { } }:
 let
-  naersk-src =  pkgs.pkgs.fetchgit {
+  naersk-src = pkgs.fetchgit {
     url = "https://github.com/nmattia/naersk.git";
     rev = "20ec73e49b9d40928b97014a40dac2cf28c56bee";
     sha256 = "CMSFTDgaW/rs53zXcGKZNjXuXX8anCrNh101yGYvNlw=";
   };
 
-  naersk =  pkgs.callPackage naersk-src { };
+  naersk = pkgs.callPackage naersk-src { };
 
   lib = pkgs.lib;
-
 
   # another attempt to make filterSource nicer to use
   allowSource = { allow, src }:
