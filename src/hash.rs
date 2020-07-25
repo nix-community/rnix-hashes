@@ -131,14 +131,14 @@ impl<'a> Hash {
                     return format!("base64\t{}", enc64)
                 },
                 Some(HashEncoding::SRI) => {
-                    return format!("SRI \t{}-{}", htype, enc64)
+                    return format!("SRI\t{}-{}", htype, enc64)
                 },
                 _ => return "".into()
             }
         }
         // If encoding argument is empty, then the default is printing all encoding
         return format!("
-        SRI \t{}-{}
+        SRI\t{}-{}
         base16\t{}
         base32\t{}
         base64\t{}
