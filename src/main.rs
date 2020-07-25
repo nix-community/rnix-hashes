@@ -3,14 +3,14 @@ extern crate clap;
 mod base32;
 mod hash;
 
-use clap::{App, Arg};
+use clap::{App, Arg, crate_version, crate_description, crate_name, crate_authors};
 use hash::Hash;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let matches = App::new("rnix-hashes")
-        .version("0.1")
-        .author("NumTide Engineering")
-        .about("Nix Hash Converter")
+    let matches = App::new(crate_name!())
+        .version(crate_version!())
+        .about(crate_description!())
+        .author(crate_authors!())
         .arg(Arg::with_name("encoding")
             .long("encoding")
             .value_name("ENCODING")
