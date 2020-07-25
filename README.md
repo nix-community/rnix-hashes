@@ -1,4 +1,4 @@
-# rnix-hashes: Nix Hash Converter
+# rnix-hashes: Nix hash converter
 
 Newer version of Nix output hash mismatches in the SRI format by default. But
 sometimes you want to access the same hashes in different encodings.
@@ -10,10 +10,7 @@ the formats.
 
 `$ rnix-hashes sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=`
 ```
-Using input file: sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
-No verbose info
-
-        SRI 	sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
+        SRI	sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
         base16	637f4e56db1c221e95487e1607008333f7863c510ec735ed8271d4ef4f029ea5
         base32	19cy097yzm3ihbnkbiqfa4y8dxrkhc00f5ky92aiw8hwvdb4wzv3
         base64	Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
@@ -24,9 +21,9 @@ No verbose info
 
 `$ rnix-hashes --help`
 ```
-rnix-hashes 0.1
-NumTide Engineering
-Nix Hash Converter
+rnix-hashes 0.1.0
+Andika Demas Riyandi <andika.riyan@gmail.com>
+Nix hash converter
 
 USAGE:
     rnix-hashes [OPTIONS] <INPUT>
