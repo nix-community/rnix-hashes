@@ -1,16 +1,18 @@
-extern crate clap;
-
 mod base32;
 mod hash;
 
-use clap::{App, Arg, crate_version, crate_description, crate_name, crate_authors};
+use clap::{
+    Arg,
+    app_from_crate,
+    crate_authors,
+    crate_description,
+    crate_name,
+    crate_version,
+};
 use hash::Hash;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let matches = App::new(crate_name!())
-        .version(crate_version!())
-        .about(crate_description!())
-        .author(crate_authors!())
+    let matches = app_from_crate!()
         .arg(Arg::with_name("encoding")
             .long("encoding")
             .value_name("ENCODING")
