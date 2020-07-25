@@ -1,28 +1,55 @@
 # rnix-hashes: Nix Hash Converter
 
-## Background
-In Nix 2.0 CLI, it uses SRI hashes instead of the old format. Meanwhile, some Nix user tends to stay with the old format.
+Newer version of Nix output hash mismatches in the SRI format by default. But
+sometimes you want to access the same hashes in different encodings.
 
-This project trying to bridge the gap between the new SRI format and old format so a happy non-SRI format user can still prefer the old format for their code.
+This is a small utility that allows you to do just that and convert between
+the formats.
 
+## Example
+
+`$ rnix-hashes sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=`
+```
+Using input file: sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
+No verbose info
+
+        SRI 	sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
+        base16	637f4e56db1c221e95487e1607008333f7863c510ec735ed8271d4ef4f029ea5
+        base32	19cy097yzm3ihbnkbiqfa4y8dxrkhc00f5ky92aiw8hwvdb4wzv3
+        base64	Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
+        
+```
+
+## Usage
+
+`$ rnix-hashes --help`
+```
+rnix-hashes 0.1
+NumTide Engineering
+Nix Hash Converter
+
+USAGE:
+    rnix-hashes [OPTIONS] <INPUT>
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+        --encoding <ENCODING>    Sets specific encoding: BASE16|BASE32|BASE64|PBASE16|PBASE32|PBASE64|SRI
+
+ARGS:
+    <INPUT>    Sets the input file to use
+```
 
 ## Installation
 
-nixpkgs-fmt is available in nixpkgs master soon. `nix-env -i rnix-hashes`.
+rnix-hashes will be available in nixpkgs master soon. `nix-env -i rnix-hashes`.
 
 It's also possible to install it directly from this repository:
 
-`nix-env -f https://github.com/numtide/rnix-hashes/archive/master.tar.gz -i`
+ `nix-env -f https://github.com/numtide/rnix-hashes/archive/master.tar.gz -i`
 
-## Usage Example
+## License
 
-User can provide their hash into `rnix-hashes` and by default, it will print out all possible encoding into the terminal.
-```
-$ rnix-hashes sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
-
-sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
-sha256:19cy097yzm3ihbnkbiqfa4y8dxrkhc00f5ky92aiw8hwvdb4wzv3
-sha256:637f4e56db1c221e95487e1607008333f7863c510ec735ed8271d4ef4f029ea5
-```
-
-You can also provide `--encoding` options if you want to print out certain encoding.
+MIT, Copyright 2020 NumTide Ltd and contributors
