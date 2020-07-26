@@ -10,18 +10,18 @@ the formats.
 
 `$ rnix-hashes sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=`
 ```
-        SRI	sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
-        base16	637f4e56db1c221e95487e1607008333f7863c510ec735ed8271d4ef4f029ea5
-        base32	19cy097yzm3ihbnkbiqfa4y8dxrkhc00f5ky92aiw8hwvdb4wzv3
-        base64	Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
-        
+SRI	sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
+base16	637f4e56db1c221e95487e1607008333f7863c510ec735ed8271d4ef4f029ea5
+base32	19cy097yzm3ihbnkbiqfa4y8dxrkhc00f5ky92aiw8hwvdb4wzv3
+base64	Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
+
 ```
 
 ## Usage
 
 `$ rnix-hashes --help`
 ```
-rnix-hashes 0.1.0
+rnix-hashes 0.2.0
 Andika Demas Riyandi <andika.riyan@gmail.com>
 Nix hash converter
 

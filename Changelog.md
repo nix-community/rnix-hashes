@@ -1,4 +1,19 @@
 
+0.2.0 / 2020-07-26
+==================
+
+  * unindent the output
+  * simplify clap usage
+  * README: sync with code
+  * remove debug info
+  * use info from Cargo.toml
+  * remove space after SRI
+  * README: improve wording and readability
+  * Create LICENSE
+  * nixpkgs-fmt
+  * add default.nix and change package name
+  * fix the README
+
 0.1.0 / 2020-07-18
 ==================
 
