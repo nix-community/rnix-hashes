@@ -15,6 +15,7 @@ use crate::{
 };
 use std::result::Result;
 use core::fmt;
+use unindent::unindent;
 
 // Hash size
 const MD5SIZE: usize = 16;
@@ -137,7 +138,7 @@ impl<'a> Hash {
             }
         }
         // If encoding argument is empty, then the default is printing all encoding
-        return format!("
+        return unindent(&format!("
         SRI\t{}-{}
         base16\t{}
         base32\t{}
@@ -147,7 +148,7 @@ impl<'a> Hash {
             enc16,
             enc32,
             enc64,
-        )
+        ))
     }
 }
 
