@@ -1,5 +1,5 @@
 {
-  description = "rnix-hash";
+  description = "rnix-hashes";
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
   inputs.naersk.url = "github:zimbatm/naersk";
@@ -21,11 +21,11 @@
           };
         in
         {
-          defaultPackage = pkgs.rnixHash.pkgs.devEnv;
-          packages = pkgs.rnixHash;
+          defaultPackage = pkgs.rhashes.pkgs.devEnv;
+          packages = pkgs.rhashes;
           devShell = pkgs.mkShell {
             name = "rnixHash-devShell";
-            buildInputs = [ pkgs.rnixHash.pkgs.devEnv ];
+            buildInputs = [ pkgs.rhashes.pkgs.devEnv ];
             shellHook =
               ''
                 PATH=$prefix/bin:$PATH

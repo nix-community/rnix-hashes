@@ -1,5 +1,5 @@
-{ rnixHash, pkgs }:
+{ rhashes, pkgs }:
 with pkgs;
 rec {
-  devEnv = callPackage ./devEnv { name = "rnixHash.pkgs.devEnv"; };
+  devEnv = callPackage ./devEnv { name = "rnix-hashes.pkgs.devEnv"; };
 }

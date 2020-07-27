@@ -1,4 +1,4 @@
-{ name, buildEnv, pkgs, rnixHash }:
+{ name, buildEnv, pkgs, rhashes }:
 buildEnv {
   inherit name;
 
