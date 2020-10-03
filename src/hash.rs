@@ -175,6 +175,7 @@ pub(crate) fn base64_len(hash_size: usize) -> usize {
 #[cfg(test)]
 mod tests {
     use crate::Hash;
+    use unindent::unindent;
 
     const INPUT: &str = "sha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=";
 
@@ -210,16 +211,16 @@ mod tests {
 
     #[test]
     fn test_opt_sri() {
-        assert_eq!(Hash::print_hash(Some("SRI"),INPUT), "SRI \tsha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=");
+        assert_eq!(Hash::print_hash(Some("SRI"),INPUT), "SRI\tsha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=");
     }
 
     #[test]
     fn test_opt_all() {
-        assert_eq!(Hash::print_hash(None,INPUT), "
-        SRI \tsha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
+        assert_eq!(Hash::print_hash(None,INPUT), unindent("
+        SRI\tsha256-Y39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
         base16\t637f4e56db1c221e95487e1607008333f7863c510ec735ed8271d4ef4f029ea5
         base32\t19cy097yzm3ihbnkbiqfa4y8dxrkhc00f5ky92aiw8hwvdb4wzv3
         base64\tY39OVtscIh6VSH4WBwCDM/eGPFEOxzXtgnHU708CnqU=
-        ");
+        "));
     }
 }
