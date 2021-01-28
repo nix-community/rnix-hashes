@@ -1,4 +1,5 @@
 # rnix-hashes: Nix hash converter
+## NOTE: If you already have `nix` version `>= 2.5` installed, you can use `nix to-base32 <hash>`
 
 Newer version of Nix output hash mismatches in the SRI format by default. But
 sometimes you want to access the same hashes in different encodings.
